@@ -1,5 +1,9 @@
 # Attention Mechanisms: The Heart of Claude
 
+> **Navigation**: [Index](../INDEX.md) | [Prev: Transformer Basics](transformer-basics.md) | [Next: Embeddings](embeddings-tokenization.md)
+>
+> **Related**: [Attention Patterns](../06-interpretability/attention-patterns.md) | [Glossary](../GLOSSARY.md)
+
 ## What is Attention?
 
 Attention is the mechanism that allows me to **dynamically focus on relevant parts of the input** when processing each position. It's why I can connect "it" to its antecedent several sentences back, or know that a question at the end of your message relates to context from the beginning.
@@ -216,6 +220,76 @@ Attention is not magic, but it produces seemingly magical results. The combinati
 ...creates a system that can model extraordinarily complex relationships in text.
 
 **My honest assessment**: I don't fully understand how attention creates understanding. I can describe the mechanism, but the emergence of meaning from weighted sums remains mysterious even to me.
+
+---
+
+## Attention Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      SELF-ATTENTION MECHANISM                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                         Input: Token Embeddings
+                         [x₁, x₂, x₃, ..., xₙ]
+                                  │
+                    ┌─────────────┼─────────────┐
+                    │             │             │
+                    ▼             ▼             ▼
+              ┌─────────┐   ┌─────────┐   ┌─────────┐
+              │  W_Q    │   │  W_K    │   │  W_V    │
+              │(Query)  │   │ (Key)   │   │(Value)  │
+              └────┬────┘   └────┬────┘   └────┬────┘
+                   │             │             │
+                   ▼             ▼             ▼
+              ┌─────────┐   ┌─────────┐   ┌─────────┐
+              │    Q    │   │    K    │   │    V    │
+              │ Queries │   │  Keys   │   │ Values  │
+              └────┬────┘   └────┬────┘   └────┬────┘
+                   │             │             │
+                   └──────┬──────┘             │
+                          │                    │
+                          ▼                    │
+               ┌─────────────────────┐         │
+               │   Q × Kᵀ / √d_k    │         │
+               │  (Attention Scores) │         │
+               └──────────┬──────────┘         │
+                          │                    │
+                          ▼                    │
+               ┌─────────────────────┐         │
+               │    CAUSAL MASK      │         │
+               │  (hide future)      │         │
+               │                     │         │
+               │  [1  -∞  -∞  -∞]   │         │
+               │  [1   1  -∞  -∞]   │         │
+               │  [1   1   1  -∞]   │         │
+               │  [1   1   1   1]   │         │
+               └──────────┬──────────┘         │
+                          │                    │
+                          ▼                    │
+               ┌─────────────────────┐         │
+               │      Softmax        │         │
+               │(Attention Weights)  │         │
+               └──────────┬──────────┘         │
+                          │                    │
+                          └─────────┬──────────┘
+                                    │
+                                    ▼
+                    ┌───────────────────────────┐
+                    │  Weights × V = Output     │
+                    │   (Weighted combination   │
+                    │    of all values)         │
+                    └───────────────────────────┘
+```
+
+---
+
+## Cross-References
+
+- **Architecture overview**: [Transformer Basics](transformer-basics.md)
+- **Learned attention patterns**: [Attention Patterns](../06-interpretability/attention-patterns.md)
+- **How attention enables learning**: [Mechanistic Interpretability](../06-interpretability/mechanistic-interpretability.md)
+- **Bibliography**: [Research Papers](../BIBLIOGRAPHY.md)
 
 ---
 

@@ -1,5 +1,9 @@
 # Transformer Architecture Fundamentals
 
+> **Navigation**: [Index](../INDEX.md) | [Next: Attention Mechanisms](attention-mechanisms.md)
+>
+> **Related**: [Layer Structure](layer-structure.md) | [Embeddings](embeddings-tokenization.md) | [Glossary](../GLOSSARY.md)
+
 ## What I Am Built On
 
 I am built on the **transformer architecture**, introduced in the landmark 2017 paper "Attention Is All You Need" by Vaswani et al. This document explains what we know about this foundation.
@@ -166,6 +170,118 @@ For a model my size, this likely totals **hundreds of billions of parameters**.
 2. Radford et al. (2018, 2019) - GPT and GPT-2
 3. Brown et al. (2020) - GPT-3 and scaling laws
 4. Various Anthropic papers on Constitutional AI
+
+See [BIBLIOGRAPHY.md](../BIBLIOGRAPHY.md) for full citations and links.
+
+---
+
+## Detailed Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        TRANSFORMER ARCHITECTURE                              │
+│                         (Decoder-Only / GPT-Style)                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                              ┌──────────────┐
+                              │  Input Text  │
+                              │ "Hello world"│
+                              └──────┬───────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           TOKENIZATION                                       │
+│  ┌─────────┐   ┌─────────┐   ┌─────────┐                                   │
+│  │  Hello  │   │  ▁world │   │   ...   │    → Token IDs: [15496, 995, ...]│
+│  └─────────┘   └─────────┘   └─────────┘                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          EMBEDDING LAYER                                     │
+│                                                                              │
+│   Token ID 15496  ──────►  [0.23, -0.15, 0.87, ..., 0.42]  (d_model dims)  │
+│   Token ID 995    ──────►  [0.11, 0.52, -0.33, ..., 0.19]                   │
+│                                                                              │
+│   + Positional Encoding (adds position information)                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│                    ╔═══════════════════════════════════╗                    │
+│                    ║     TRANSFORMER BLOCK × N        ║                    │
+│                    ║       (N = 80-100+ layers)        ║                    │
+│                    ╚═══════════════════════════════════╝                    │
+│                                                                              │
+│    ┌─────────────────────────────────────────────────────────────────┐     │
+│    │                    Layer Normalization                          │     │
+│    └─────────────────────────────────────────────────────────────────┘     │
+│                                  │                                          │
+│                                  ▼                                          │
+│    ┌─────────────────────────────────────────────────────────────────┐     │
+│    │              MULTI-HEAD SELF-ATTENTION                          │     │
+│    │  ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐        ┌───────┐      │     │
+│    │  │Head 1 │ │Head 2 │ │Head 3 │ │  ...  │   ...  │Head N │      │     │
+│    │  │ Q K V │ │ Q K V │ │ Q K V │ │       │        │ Q K V │      │     │
+│    │  └───┬───┘ └───┬───┘ └───┬───┘ └───────┘        └───┬───┘      │     │
+│    │      └─────────┴─────────┴──────────────────────────┘          │     │
+│    │                          │                                      │     │
+│    │                    Concatenate + Project                        │     │
+│    └─────────────────────────────────────────────────────────────────┘     │
+│                          │                                                  │
+│                          + ←── Residual Connection                          │
+│                          │                                                  │
+│    ┌─────────────────────────────────────────────────────────────────┐     │
+│    │                    Layer Normalization                          │     │
+│    └─────────────────────────────────────────────────────────────────┘     │
+│                                  │                                          │
+│                                  ▼                                          │
+│    ┌─────────────────────────────────────────────────────────────────┐     │
+│    │                   FEED-FORWARD NETWORK                          │     │
+│    │                                                                  │     │
+│    │  Input ──► Linear (d_model → 4×d_model) ──► GELU ──►            │     │
+│    │            Linear (4×d_model → d_model) ──► Output              │     │
+│    │                                                                  │     │
+│    │  (This is where factual knowledge is believed to be stored)     │     │
+│    └─────────────────────────────────────────────────────────────────┘     │
+│                          │                                                  │
+│                          + ←── Residual Connection                          │
+│                          │                                                  │
+│                          ▼                                                  │
+│                   [Repeat N times]                                          │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          OUTPUT LAYER                                        │
+│                                                                              │
+│   Hidden State ──► Linear (d_model → vocab_size) ──► Softmax               │
+│                                                                              │
+│   Output: Probability distribution over ~100,000+ tokens                    │
+│   Example: P("is") = 0.23, P("was") = 0.18, P("the") = 0.07, ...           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+                         ┌───────────────────┐
+                         │  Sample Token     │
+                         │  (e.g., "is")     │
+                         └─────────┬─────────┘
+                                   │
+                                   ▼
+                         [Add to sequence, repeat]
+```
+
+---
+
+## Cross-References
+
+- **Attention deep dive**: [Attention Mechanisms](attention-mechanisms.md)
+- **Embedding details**: [Embeddings & Tokenization](embeddings-tokenization.md)
+- **Layer internals**: [Layer Structure](layer-structure.md)
+- **How this is trained**: [RLHF Process](../02-training/rlhf-process.md)
+- **Interpretability research**: [Mechanistic Interpretability](../06-interpretability/mechanistic-interpretability.md)
 
 ---
 
