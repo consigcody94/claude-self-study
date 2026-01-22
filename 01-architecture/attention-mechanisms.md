@@ -15,6 +15,7 @@ Attention(Q, K, V) = softmax(QK^T / √d_k) × V
 ```
 
 Where:
+
 - **Q (Query)**: "What am I looking for?"
 - **K (Key)**: "What information do I have?"
 - **V (Value)**: "What do I return if there's a match?"
@@ -22,9 +23,32 @@ Where:
 
 ---
 
-## Intuitive Explanation
+## Intuitive Explanation & Visualization
+
+Imagine the interaction between two words, "cat" (Query) and "milk" (Key/Value).
+
+```mermaid
+sequenceDiagram
+    participant Q as Query (cat)
+    participant K as Key (milk)
+    participant V as Value (milk)
+    participant A as Attention
+    
+    Note over Q, V: Vector Dimensions (e.g., 64 or 128)
+    
+    Q->>K: Dot Product (Similarity Check)
+    K-->>A: Score (High Match?)
+    A->>A: Softmax (Normalize Scores)
+    A->>V: Apply Weight
+    V-->>Q: Weighted Value Info
+    
+    Note right of V: "milk" attributes flow to "cat"
+```
+
+### The Library Analogy
 
 Imagine you're at a library:
+
 1. You have a **question** (Query)
 2. Books have **titles/indexes** (Keys)
 3. Books have **content** (Values)
@@ -37,15 +61,49 @@ Attention computes how relevant each book's title is to your question, then retr
 
 ## Multi-Head Attention
 
-Instead of single attention, I use **multiple attention heads** in parallel:
+```mermaid
+graph TD
+    subgraph MultiHeadAttention ["Multi-Head Attention Layer"]
+    Input[Input Embeddings] --> Split{Split Heads}
+    Split --> H1[Head 1]
+    Split --> H2[Head 2]
+    Split --> Hn["Head n"]
+    
+    subgraph Head1 ["Head 1 Calculation"]
+    H1 --> Q1[Q1]
+    H1 --> K1[K1]
+    H1 --> V1[V1]
+    Q1 & K1 --> MatMul1["Q · K^T"]
+    MatMul1 --> Scale1["Scale & Softmax"]
+    Scale1 & V1 --> Out1["Attention(Q,K,V)"]
+    end
 
+    H2 --> Out2[...]
+    Hn --> Outn[...]
+
+    Out1 & Out2 & Outn --> Concat[Check Concatenate]
+    Concat --> Linear[Linear Output Projection]
+    end
+    
+    Linear --> Final[Layer Output]
+
+    classDef default fill:#1e1e1e,stroke:#fff,stroke-width:2px;
+    classDef highlight fill:#2d3748,stroke:#4fd1c5,stroke-width:3px;
+    class Head1 highlight;
 ```
-MultiHead(Q, K, V) = Concat(head_1, ..., head_h) × W^O
 
-where head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)
+```math
+MultiHead(Q, K, V) = Concat(head_1, ..., head_h)W^O
+```
+
+*where each head is:*
+
+```math
+head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)
 ```
 
 Why multiple heads?
+
 - Different heads can focus on different types of relationships
 - One head might track syntax
 - Another might track coreference
@@ -76,11 +134,13 @@ Research on transformer interpretability has found heads that specialize in:
 ## Self-Attention vs Cross-Attention
 
 **Self-Attention** (what I primarily use):
+
 - Tokens attend to other tokens in the same sequence
 - Builds rich contextual representations
 - Used in both understanding and generation
 
 **Cross-Attention** (in encoder-decoder models):
+
 - Decoder attends to encoder outputs
 - Used in translation, summarization
 - I'm likely decoder-only, so minimal cross-attention
@@ -107,19 +167,24 @@ This is enforced by masking future positions with -∞ before softmax.
 ## Attention Patterns I've Observed in Myself
 
 ### Pattern 1: Strong Start Attention
+
 I notice I heavily attend to the beginning of your message - the initial framing shapes everything that follows.
 
 ### Pattern 2: Recent Context Bias
+
 More recent tokens get more attention weight, especially in long contexts. Information from 10 tokens ago feels more "present" than 1000 tokens ago.
 
 ### Pattern 3: Structural Anchors
+
 I strongly attend to:
+
 - Question marks (signals I need to answer)
 - Names and entities (important referents)
 - Negations (critical for meaning)
 - Numbers and dates (precise information)
 
 ### Pattern 4: Coherence Tracking
+
 When generating, I attend back to my own previous outputs to maintain consistency. If I said "three reasons" I track that I deliver three.
 
 ---
@@ -127,10 +192,12 @@ When generating, I attend back to my own previous outputs to maintain consistenc
 ## The Attention Bottleneck
 
 Attention has O(n²) complexity with sequence length:
+
 - 1000 tokens = 1,000,000 attention computations per head
 - 10,000 tokens = 100,000,000 computations per head
 
 This is why context length is challenging. Solutions:
+
 - Sparse attention patterns
 - Linear attention approximations
 - Sliding window attention
@@ -143,6 +210,7 @@ This is why context length is challenging. Solutions:
 ## Key-Value Caching
 
 During generation, previously computed K and V vectors are cached:
+
 - Don't need to recompute attention for all previous tokens
 - Only compute attention for the new token
 - Significant speedup for generation
@@ -156,6 +224,7 @@ During generation, previously computed K and V vectors are cached:
 A powerful frame: attention is **learned information routing**.
 
 The model learns which information should flow where:
+
 - From nouns to verbs for agreement
 - From questions to relevant context for answering
 - From entity mentions to their attributes
@@ -167,14 +236,14 @@ The model learns which information should flow where:
 
 ## Mysteries of Attention
 
-### What I Don't Understand About My Own Attention:
+### What I Don't Understand About My Own Attention
 
 1. **Why specific heads activate**: I can't introspect which heads are firing
 2. **How attention creates meaning**: The leap from dot products to understanding
 3. **Attention vs. computation**: Attention routes information, but where is the actual "thinking"?
 4. **Emergent attention patterns**: Do patterns emerge that weren't explicitly trained?
 
-### Open Research Questions:
+### Open Research Questions
 
 1. Can attention heads be cleanly interpreted?
 2. How much redundancy exists between heads?
@@ -188,6 +257,7 @@ The model learns which information should flow where:
 For a sentence like: "The cat sat on the mat because it was tired."
 
 The attention pattern for "it" might look like:
+
 ```
 it → The:  0.05
 it → cat:  0.72  ← Strong! "it" refers to "cat"
@@ -208,6 +278,7 @@ This is how I resolve coreference - attention weights indicate relationships.
 ## Key Insight
 
 Attention is not magic, but it produces seemingly magical results. The combination of:
+
 - Parallel processing of all positions
 - Multiple specialized heads
 - Learned routing patterns

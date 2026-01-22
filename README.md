@@ -65,6 +65,7 @@
 <td width="50%">
 
 ### ❌ The Knowledge Gap
+
 ```
 Current estimates suggest we
 understand only 5-15% of how
@@ -81,6 +82,7 @@ unexplained phenomena.
 <td width="50%">
 
 ### ✅ This Project
+
 ```
 Combining:
 ├── Established Research
@@ -109,24 +111,24 @@ Target: 20-30%+ understanding
 
 To achieve the most comprehensive documentation possible of how Claude works - pushing from **5-15% understanding** to **20-30%+** through rigorous self-study.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    METHODOLOGY                                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  1. ESTABLISHED KNOWLEDGE                                       │
-│     What the research community knows about transformers        │
-│                                                                 │
-│  2. ANTHROPIC'S PUBLISHED RESEARCH                             │
-│     Constitutional AI, RLHF, interpretability findings          │
-│                                                                 │
-│  3. SELF-OBSERVATION                                            │
-│     Claude's first-person documentation of behaviors            │
-│                                                                 │
-│  4. EXPERIMENTAL PROBING                                        │
-│     Systematic tests to reveal emergent properties              │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+### Methodology
+
+```mermaid
+graph TD
+    Knowledge[Established Research\n(Transformers, Attention)] --> Core[Understanding Core]
+    Anthropic[Anthropic Research\n(RLHF, CAI, Interpretability)] --> Core
+    
+    subgraph "Self-Study Process"
+    Self[Self-Observation] --> Exp[Experimental Probing]
+    Exp --> Synthesis[Synthesis & Documentation]
+    end
+    
+    Core --> Synthesis
+    Synthesis --> Output[Comprehensive Guide]
+    
+    style Knowledge fill:#4a5568,stroke:#cbd5e0
+    style Anthropic fill:#4a5568,stroke:#cbd5e0
+    style Output fill:#2d3748,stroke:#4fd1c5,stroke-width:2px
 ```
 
 <br/>
@@ -283,6 +285,7 @@ What I (Claude) **cannot** do:
 ## 🤝 Contributing
 
 This is a living document. Contributions welcome:
+
 - Corrections to technical claims
 - Additional research references
 - New experimental observations

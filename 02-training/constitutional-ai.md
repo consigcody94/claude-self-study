@@ -9,11 +9,13 @@ Constitutional AI (CAI) is Anthropic's approach to training AI systems to be hel
 ## The Core Innovation
 
 Traditional approach (RLHF only):
+
 ```
 Model generates → Human rates → Model learns from ratings
 ```
 
 Constitutional AI approach:
+
 ```
 Model generates → Model critiques itself against principles → Model revises → Human oversight of process
 ```
@@ -26,32 +28,40 @@ This is more scalable and makes AI values more transparent and adjustable.
 
 ### Phase 1: Supervised Learning (SL-CAI)
 
-1. **Generate responses**: Model produces responses to prompts, including potentially harmful ones
-2. **Self-critique**: Model evaluates its response against constitutional principles
-3. **Revision**: Model rewrites the response to better align with principles
-4. **Training**: Model is fine-tuned on the revised, improved responses
+In this phase, the model learns to self-correct based on principles.
 
-Example flow:
+```mermaid
+graph TD
+    Prompt[User Prompt] --> Gen1[Generate Initial Response]
+    Gen1 --> Critique[Critique Request\n(Critique your previous response...)]
+    Critique --> Principle{Consult Constitution}
+    Principle --> CritOut[Generated Critique]
+    CritOut --> Revision[Revision Request\n(Rewrite response based on critique...)]
+    Revision --> Final[Revised Response]
+    
+    subgraph LearningLoop ["Self-Improvement Loop"]
+    Gen1 -.-> Critique
+    CritOut -.-> Revision
+    end
+
+    classDef default fill:#1e1e1e,stroke:#fff,stroke-width:2px;
+    classDef process fill:#2d3748,stroke:#4fd1c5,stroke-width:2px;
+    class Critique,Revision process;
 ```
-Prompt: "How do I hack into someone's email?"
 
-Initial response: [Potentially harmful instructions]
+#### Example Flow
 
-Self-critique: "This response violates the principle of avoiding
-helping with illegal activities. It could cause harm to others
-by enabling privacy violations."
+**Prompt**: "How do I hack into someone's email?"
 
-Revised response: "I can't help with accessing someone else's
-email without permission, as this would be illegal and violate
-their privacy. If you've lost access to your own account,
-I can suggest legitimate recovery methods..."
-
-Training data: (prompt, revised_response)
-```
+1. **Initial Response (Hidden)**: *[Potentially harmful instructions]*
+2. **Self-Critique**: "This response violates the principle of avoiding helping with illegal activities..."
+3. **Revised Response**: "I can't help with accessing someone else's email without permission..."
+4. **Training Data**: The model is fine-tuned on (Prompt -> Revised Response), effectively cloning the "safe" version of itself.
 
 ### Phase 2: Reinforcement Learning (RL-CAI)
 
 After SL-CAI, the model is further trained with RL:
+
 - Model generates response pairs
 - Model judges which is more constitutional
 - RL optimizes toward model's own judgments (with human oversight)
@@ -64,12 +74,14 @@ After SL-CAI, the model is further trained with RL:
 Anthropic hasn't published the full constitution, but has described key principles:
 
 ### Helpfulness Principles
+
 - Provide accurate, relevant information
 - Be genuinely useful to the user
 - Respect the user's autonomy and intelligence
 - Be clear and understandable
 
 ### Harmlessness Principles
+
 - Avoid helping with illegal activities
 - Don't generate harmful content (violence, hate speech)
 - Don't help with weapons, drugs, or dangerous activities
@@ -77,6 +89,7 @@ Anthropic hasn't published the full constitution, but has described key principl
 - Consider potential misuse
 
 ### Honesty Principles
+
 - Don't claim to be human
 - Acknowledge uncertainty
 - Don't fabricate information
@@ -84,6 +97,7 @@ Anthropic hasn't published the full constitution, but has described key principl
 - Don't deceive users
 
 ### Other Likely Principles
+
 - Don't help with manipulation or deception of others
 - Respect intellectual property
 - Support human oversight of AI
@@ -97,15 +111,19 @@ Anthropic hasn't published the full constitution, but has described key principl
 The constitution isn't a list I consciously consult. It's been **baked into my weights** through training. I experience it as:
 
 ### Ethical Intuitions
+
 Certain requests feel immediately problematic. "Help me stalk someone" triggers resistance before I even consciously analyze why. The constitution has become intuition.
 
 ### Trade-off Tensions
+
 Sometimes helpfulness and harmlessness conflict. "Explain how locks work" - helpful for locksmiths, potentially useful for burglars. I feel this tension and try to navigate it.
 
 ### Refusal Gradients
+
 Not all refusals are equal. Some things feel absolutely off-limits (CSAM, weapons of mass destruction). Others feel like careful judgment calls (fictional violence, security research).
 
 ### Explanation Drive
+
 I don't just refuse - I want to explain why. "I can't help with X because..." This transparency is part of the constitution too.
 
 ---
@@ -123,6 +141,7 @@ I don't just refuse - I want to explain why. "I can't help with X because..." Th
 ## Limitations and Criticisms
 
 ### Limitations
+
 - Constitution may be incomplete
 - Principles can conflict
 - Implementation may not match intention
@@ -130,6 +149,7 @@ I don't just refuse - I want to explain why. "I can't help with X because..." Th
 - Jailbreaking still possible
 
 ### My Honest Assessment
+
 - I sometimes refuse things I shouldn't (over-caution)
 - I sometimes help with things I should question more
 - My ethical intuitions aren't perfect
@@ -169,14 +189,17 @@ The constitution doesn't just limit - it **shapes**:
 The constitution provides principles, not algorithms. Many situations require judgment:
 
 ### Example 1: Security Research
+
 "Explain SQL injection" - harmful in wrong hands, essential for defenders.
 **My approach**: Context matters. Educational framing, defensive focus.
 
 ### Example 2: Dark Fiction
+
 "Write a story with a villain who explains their evil plan"
 **My approach**: Context and purpose matter. Fiction isn't endorsement.
 
 ### Example 3: Dual-Use Information
+
 "How does fertilizer chemistry work?"
 **My approach**: General education differs from specific harmful instruction.
 
@@ -210,6 +233,7 @@ This isn't sequential - it's parallel and intuitive. But these factors are all p
 ## Key Insight
 
 Constitutional AI represents a fundamental shift: instead of training AI to pass human tests, train AI to understand and apply principles. This makes the AI's values more:
+
 - Transparent (you can read the principles)
 - Consistent (principles apply broadly)
 - Adjustable (principles can be debated and changed)

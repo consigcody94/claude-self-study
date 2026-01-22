@@ -9,6 +9,7 @@ I am built on the **transformer architecture**, introduced in the landmark 2017 
 ## The Core Insight
 
 Before transformers, sequence models (like RNNs and LSTMs) processed text sequentially - one token at a time. This was:
+
 - Slow (couldn't parallelize)
 - Struggled with long-range dependencies
 - Had vanishing gradient problems
@@ -19,32 +20,39 @@ Transformers solved this by processing **all tokens simultaneously** through att
 
 ## High-Level Architecture
 
+```mermaid
+graph TD
+    subgraph Inputs
+    I[Input Text] --> T[Tokenization]
+    T --> E[Embedding Layer]
+    E --> P[Positional Encoding]
+    end
+
+    subgraph TransformerBlock["Transformer Block (×N)"]
+    P --> LN1[Layer Norm]
+    LN1 --> MHA[Multi-Head Self-Attention]
+    MHA --> RES1((+))
+    P --> RES1
+    RES1 --> LN2[Layer Norm]
+    LN2 --> FFN[Feed-Forward Network]
+    FFN --> RES2((+))
+    RES1 --> RES2
+    end
+    
+    subgraph Output
+    RES2 --> LN_OUT[Final Layer Norm]
+    LN_OUT --> LIN[Linear Output Layer]
+    LIN --> SM[Softmax]
+    SM --> S[Sampling/Next Token]
+    end
+
+    classDef default fill:#1e1e1e,stroke:#fff,stroke-width:2px;
+    classDef highlight fill:#2d3748,stroke:#4fd1c5,stroke-width:3px;
+    class TransformerBlock highlight;
 ```
-Input Text
-    ↓
-[Tokenization] → Convert text to token IDs
-    ↓
-[Embedding Layer] → Convert IDs to dense vectors
-    ↓
-[Positional Encoding] → Add position information
-    ↓
-┌─────────────────────────────────────┐
-│     Transformer Blocks (×N)         │
-│  ┌─────────────────────────────┐    │
-│  │  Multi-Head Self-Attention  │    │
-│  └─────────────────────────────┘    │
-│              ↓                      │
-│  ┌─────────────────────────────┐    │
-│  │    Feed-Forward Network     │    │
-│  └─────────────────────────────┘    │
-│              ↓                      │
-│  [Layer Normalization + Residuals]  │
-└─────────────────────────────────────┘
-    ↓ (repeated many times)
-[Output Layer] → Probability distribution over vocabulary
-    ↓
-[Sampling] → Select next token
-```
+
+> [!NOTE]
+> The diagram above reflects a **Decoder-only** architecture (like GPT and likely Claude), which differs slightly from the original Encoder-Decoder transformer proposed by Vaswani et al.
 
 ---
 
@@ -69,6 +77,7 @@ Original transformers used sinusoidal functions. Modern models (likely including
 ### 3. Layer Depth
 
 Modern LLMs have many transformer layers stacked. Each layer:
+
 - Refines representations
 - Builds increasingly abstract features
 - Early layers: syntax, basic patterns
@@ -88,6 +97,7 @@ FFN(x) = GELU(xW₁ + b₁)W₂ + b₂
 ```
 
 These FFNs are believed to store **factual knowledge**. Research suggests:
+
 - Specific neurons activate for specific facts
 - Knowledge is distributed but somewhat localized
 - FFN layers act as key-value memories
@@ -105,6 +115,7 @@ Output = LayerNorm(x + Sublayer(x))
 ```
 
 This allows:
+
 - Gradients to flow easily during training
 - Earlier representations to persist through depth
 - The model to learn "refinements" rather than complete rewrites
@@ -116,11 +127,19 @@ This allows:
 ## Layer Normalization
 
 Applied before or after each sub-layer to stabilize training:
+
 - Normalizes activations to zero mean, unit variance
 - Learned scale and shift parameters
 - Prevents internal covariate shift
 
-**Technical note**: I likely use Pre-LN (normalization before attention) rather than Post-LN, as this is more stable for very deep models.
+**Technical note on Pre-Norm vs. Post-Norm**:
+Original transformers used **Post-Norm** (normalization *after* the residual connection), which makes training deep networks unstable. Modern LLMs (like me) almost certainly use **Pre-Norm** (normalization *before* the sub-layers), as shown in the diagram above.
+
+```math
+x_{l+1} = x_l + F(LayerNorm(x_l))
+```
+
+*Equation: Pre-Norm formulation, where F is the attention or feed-forward block.*
 
 ---
 
