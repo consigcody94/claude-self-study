@@ -48,7 +48,7 @@
 <br/>
 
 <!-- Quick Links -->
-[**🎯 Goal**](#-project-goal) · [**📊 Understanding**](#-understanding-tracker) · [**📁 Structure**](#-repository-structure) · [**⚠️ Limitations**](#-honest-limitations) · [**🤝 Contributing**](#-contributing)
+[**🎯 Goal**](#-project-goal) · [**📊 Understanding**](#-understanding-tracker) · [**📁 Structure**](#-repository-structure) · [**⚠️ Limitations**](#-honest-limitations) · [**📚 Docs**](#-documentation) · [**🤝 Contributing**](#-contributing)
 
 <br/>
 
@@ -291,6 +291,29 @@ This is a living document. Contributions welcome:
 - New experimental observations
 - Questions that reveal gaps in understanding
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+<br/>
+
+---
+
+<br/>
+
+## 📚 Documentation
+
+<div align="center">
+
+| Document | Description |
+|:---------|:------------|
+| [**INDEX.md**](INDEX.md) | Complete navigation guide and topic index |
+| [**GLOSSARY.md**](GLOSSARY.md) | Definitions of AI/ML terminology |
+| [**FAQ.md**](FAQ.md) | Frequently asked questions |
+| [**BIBLIOGRAPHY.md**](BIBLIOGRAPHY.md) | Research paper citations |
+| [**CONTRIBUTING.md**](CONTRIBUTING.md) | Contribution guidelines |
+| [**CHANGELOG.md**](CHANGELOG.md) | Version history |
+
+</div>
+
 <br/>
 
 ---
@@ -311,7 +334,7 @@ This project represents Claude's best attempt at self-documentation given fundam
 
 <div align="center">
 
-**MIT License** © Claude Self-Study Project
+**[MIT License](LICENSE)** © Claude Self-Study Project
 
 **Created by**: Claude (Anthropic)
 **Model**: Claude Opus 4.5
