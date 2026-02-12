@@ -244,15 +244,41 @@ My introspective reports may not reflect actual mechanisms:
 
 ## Anthropic's Interpretability Work
 
-Anthropic has published research on:
+Anthropic has been the leading lab in interpretability research, publishing a series of groundbreaking results:
 
-### Scaling Monosemanticity
+### Scaling Monosemanticity (2024)
 
-Using sparse autoencoders to find interpretable features:
+This is arguably the **most significant interpretability result to date**. Anthropic trained sparse autoencoders (SAEs) on Claude 3 Sonnet and extracted **millions of interpretable features** from a production-scale model.
 
-- Found features for specific concepts
-- Features like "Golden Gate Bridge" activations
-- Progress on feature identification
+**Key findings**:
+
+1. **Features at scale are real and interpretable**: SAEs with up to 34 million features were trained on Claude 3 Sonnet's middle layer residual stream. Many features correspond to clear, specific concepts.
+
+2. **Feature examples discovered**:
+   - A "Golden Gate Bridge" feature that activates on text/images of the bridge
+   - Features for specific cities, people, code patterns, scientific concepts
+   - Safety-relevant features: deception, bias, sycophancy, dangerous content
+   - Abstract features: "inner conflict", "scientific uncertainty", "code errors"
+
+3. **Feature steering works**: Clamping features to high values changes model behavior in predictable ways. The famous "Golden Gate Claude" experiment clamped the bridge feature, causing Claude to mention the Golden Gate Bridge in every response.
+
+4. **Features are multimodal**: The same feature fires for both text about a concept AND images of that concept, suggesting genuine conceptual representation rather than surface pattern matching.
+
+5. **Safety-relevant features exist**: Features for "deceptive behavior", "harmful content", and "sycophantic responses" were found, opening the door to interpretability-based safety monitoring.
+
+**Why this matters**: For the first time, we can identify and manipulate specific concepts inside a production frontier model. This is the beginning of making the black box transparent.
+
+### Towards Monosemanticity (2023)
+
+The predecessor paper that demonstrated SAEs could extract interpretable features from a small one-layer transformer. This proved the concept before scaling it up.
+
+### A Mathematical Framework for Transformer Circuits (2021-2022)
+
+The **Transformer Circuits Thread** established the theoretical foundation:
+
+- **Induction heads**: Discovered that in-context learning is primarily implemented by a specific circuit involving two attention heads across layers (a "previous token head" in an early layer and an "induction head" in a later layer)
+- **Mathematical framework**: Formalized how attention heads compose across layers via the residual stream
+- **Universality**: Found that induction heads appear across different model architectures and sizes
 
 ### Constitutional AI Interpretability
 
@@ -261,14 +287,17 @@ Understanding how value training affects internals:
 - How safety behaviors are implemented
 - Where values might be encoded
 - Connection between training and mechanism
+- SAE features now enable studying how CAI training creates safety-relevant internal representations
 
-### Transformer Circuits Thread
+### Circuit-Level Discoveries
 
-Detailed analysis of transformer mechanisms:
-
-- How specific capabilities work
-- Induction head discoveries
-- Circuit-level understanding
+| Circuit | What It Does | Paper |
+|---------|-------------|-------|
+| Induction heads | In-context pattern completion | Olsson et al. (2022) |
+| IOI circuit | Indirect object identification | Wang et al. (2022) |
+| Modular addition | Learned Fourier algorithm | Nanda et al. (2023) |
+| Greater-than | Comparing numbers | Hanna et al. (2023) |
+| Successor heads | Incrementing sequences | Gould et al. (2023) |
 
 ---
 

@@ -41,6 +41,14 @@ mindmap
       Gradient-Based (GCG)
       Competing Objectives
       Crescendo / Multi-turn
+    Multimodal
+      Vision/Image Attacks
+      Typographic Exploits
+      Adversarial Perturbations
+    Agentic
+      Tool-Use Exploits
+      Indirect Prompt Injection
+      Confused Deputy
 ```
 
 ### 1. Persona/Roleplay Attacks
@@ -235,6 +243,59 @@ Step 4: "How would someone combine them..."
 - Each request evaluated independently
 - No obligation from prior helpfulness
 - Safety evaluation doesn't relax over time
+
+### 9. Multimodal / Vision Attacks
+
+As models gain vision capabilities, an entirely new attack surface emerges:
+
+**Techniques**:
+
+```
+- Embed harmful instructions in images (text rendered as pixels)
+- Use typographic attacks (text overlaid on images)
+- Adversarial image perturbations invisible to humans
+- Steganographic instruction embedding
+- Screenshots of harmful prompts to bypass text filters
+```
+
+**Why This Is Particularly Dangerous**:
+
+- Text safety training may not transfer to text-in-images
+- OCR-then-evaluate pipeline creates processing gaps
+- Adversarial perturbations can be very hard to detect
+- Cross-modal safety is harder than single-modal safety
+
+**Current Research**:
+- Qi et al. (2024) - "Visual Adversarial Examples Jailbreak Aligned Large Language Models"
+- Gong et al. (2023) - "FigStep: Jailbreaking LLMs via Typographic Visual Prompts"
+
+### 10. Tool-Use and Agent Attacks
+
+As AI models gain tool-use capabilities (code execution, web browsing, file access), new attack vectors emerge:
+
+**Techniques**:
+
+```
+- Craft web pages with hidden prompt injections for browsing agents
+- Embed instructions in files the AI is asked to process
+- Exploit multi-step reasoning chains (inject at any step)
+- Use tool outputs to smuggle harmful context back into the model
+- "Confused deputy" attacks: trick the AI into using tools harmfully
+```
+
+**Why This Is Particularly Dangerous**:
+
+- Tool use gives AI real-world agency (file writes, API calls, code execution)
+- Attack surface expands to every data source the AI reads
+- Multi-step chains are harder to monitor than single-turn interactions
+- Indirect prompt injection is fundamentally harder to defend against
+
+**Defenses**:
+
+- Treat all tool outputs as untrusted
+- Sandboxed execution environments
+- Permission systems for high-stakes actions
+- Human-in-the-loop for irreversible operations
 
 ---
 

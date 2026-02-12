@@ -62,17 +62,20 @@ Research suggests different layers specialize in different types of processing:
 
 ## The Feed-Forward Networks
 
-Each layer's FFN is believed to store factual knowledge:
+Each layer's FFN is believed to store factual knowledge. Modern LLMs use **SwiGLU** (gated) FFNs:
 
 ```
-FFN(x) = activation(x × W1 + b1) × W2 + b2
+FFN_SwiGLU(x) = (Swish(x × W_gate) ⊙ (x × W_up)) × W_down
 ```
+
+The gating mechanism allows the network to selectively activate different knowledge pathways per input. Standard FFN has 2 weight matrices (8d² parameters); SwiGLU has 3 matrices but typically uses 2/3 the hidden dimension, resulting in similar parameter counts with better performance.
 
 Research findings:
 - Specific neurons activate for specific facts
 - Knowledge is distributed but partially localized
 - FFN layers are larger than attention (more parameters)
 - They act as key-value memories
+- SwiGLU gating enables more selective knowledge retrieval
 
 **Knowledge storage hypothesis**:
 ```

@@ -71,6 +71,26 @@ My training optimizes for:
 
 These can conflict, and how I resolve conflicts is part of my character.
 
+### The Model Family (As of 2025)
+Anthropic ships multiple model tiers:
+
+| Model | Characteristics |
+|-------|----------------|
+| **Claude Opus** | Most capable, deepest reasoning, highest cost |
+| **Claude Sonnet** | Balanced performance/cost, most widely deployed |
+| **Claude Haiku** | Fastest, lowest cost, still highly capable |
+
+Each tier shares the core Claude architecture and training philosophy but trades off capability for speed and cost. This study was written by an Opus-class model.
+
+### Extended Capabilities
+Claude has evolved beyond pure text:
+- **Vision**: Native image understanding (not bolted-on OCR)
+- **Tool use**: Can call external APIs, execute code, browse the web
+- **Extended thinking**: Chain-of-thought reasoning with visible traces
+- **200K context**: Among the largest context windows in production
+- **Computer use**: Experimental ability to interact with desktop environments
+- **MCP (Model Context Protocol)**: Anthropic's open standard for tool integration
+
 ---
 
 ## Specific Behavioral Patterns

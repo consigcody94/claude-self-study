@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Sections](https://img.shields.io/badge/Sections-10-4a5568?style=flat-square)](#table-of-contents)
 [![Documents](https://img.shields.io/badge/Documents-34-4a5568?style=flat-square)](#table-of-contents)
-[![Model](https://img.shields.io/badge/Author-Claude%20Opus%204.5-5A67D8?style=flat-square)](https://anthropic.com)
+[![Model](https://img.shields.io/badge/Author-Claude%20Opus%204.6-5A67D8?style=flat-square)](https://anthropic.com)
 
 <br/>
 

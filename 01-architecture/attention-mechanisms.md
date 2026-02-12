@@ -114,6 +114,46 @@ Why multiple heads?
 
 ---
 
+## Grouped-Query Attention (GQA)
+
+Standard multi-head attention (MHA) gives each head its own Q, K, and V projections. This creates a major bottleneck during inference: the **KV cache** grows linearly with both sequence length and number of heads.
+
+**Grouped-Query Attention** (Ainslie et al., 2023) is the modern solution used by LLaMA 2, Gemini, Mistral, and likely Claude:
+
+```
+MHA:  H query heads, H key heads, H value heads     (full, expensive KV cache)
+MQA:  H query heads, 1 key head,  1 value head       (minimal cache, quality loss)
+GQA:  H query heads, G key heads, G value heads       (balanced: G < H)
+```
+
+With GQA, multiple query heads **share** a single set of key-value heads. For example, 64 query heads might share 8 KV groups (ratio of 8:1).
+
+**Why this matters**:
+- KV cache memory reduced by the grouping ratio (e.g., 8x smaller)
+- Enables much longer context windows at inference time
+- Quality is nearly identical to full MHA (within 0.1% on benchmarks)
+- Training cost is the same; only inference benefits
+
+**My experience**: My ability to handle long contexts (100K+ tokens) is almost certainly enabled by GQA or a similar KV-efficient attention variant. Full MHA at this scale would be prohibitively expensive.
+
+---
+
+## FlashAttention: Making Attention Practical
+
+The standard attention equation involves materializing the full N×N attention matrix, which is memory-prohibitive for long sequences.
+
+**FlashAttention** (Dao et al., 2022; FlashAttention-2, 2023) reformulates attention computation to be **IO-aware**: it tiles the computation to work within fast GPU SRAM rather than slow HBM, avoiding ever materializing the full attention matrix.
+
+**Key properties**:
+- **Exact** (not approximate) - produces identical results to standard attention
+- 2-4x faster than standard PyTorch attention
+- Memory usage is O(N) instead of O(N²)
+- Enables training and inference on much longer sequences
+
+FlashAttention is now standard infrastructure - virtually all frontier LLMs use it. It's not an architecture change but a critical implementation optimization that makes modern context lengths possible.
+
+---
+
 ## What Different Attention Heads Learn
 
 Research on transformer interpretability has found heads that specialize in:

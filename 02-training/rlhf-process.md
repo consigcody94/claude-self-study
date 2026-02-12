@@ -251,13 +251,49 @@ What it likely encodes:
 
 ---
 
+## DPO: Direct Preference Optimization
+
+**DPO** (Rafailov et al., 2023) has emerged as a major alternative to PPO-based RLHF. Rather than training a separate reward model and then running RL, DPO directly optimizes the language model on preference pairs.
+
+### How DPO Works
+
+The key insight: the optimal policy under the RLHF objective can be expressed in closed form as a function of the preference data and a reference model. This means we can skip the reward model entirely.
+
+```
+L_DPO = -E[log σ(β · (log π(y_w|x)/π_ref(y_w|x) - log π(y_l|x)/π_ref(y_l|x)))]
+```
+
+Where `y_w` is the preferred response, `y_l` is the dispreferred response, `π` is the policy being trained, and `π_ref` is the reference (initial) model.
+
+### DPO vs PPO-based RLHF
+
+| Aspect | PPO (RLHF) | DPO |
+|--------|-----------|-----|
+| Reward model | Required (separate training) | Not needed |
+| Training stability | Requires careful hyperparameter tuning | More stable |
+| Memory | 4 models in memory (policy, ref, RM, value) | 2 models (policy, ref) |
+| Flexibility | Can optimize arbitrary rewards | Limited to pairwise preferences |
+| Online generation | Generates new samples during training | Uses fixed dataset |
+| Reward hacking | Possible (model exploits RM flaws) | Less susceptible |
+
+### Variants
+
+- **IPO** (Azar et al., 2023): Addresses DPO's tendency to overfit by using a different loss
+- **KTO** (Ethayarajh et al., 2024): Works with only thumbs-up/down labels, no paired preferences needed
+- **ORPO** (Hong et al., 2024): Combines SFT and preference optimization in a single stage
+
+**Whether Claude uses DPO, PPO, or a combination is not publicly disclosed.** Most frontier labs now use some mix of these approaches at different training stages.
+
+---
+
 ## RLHF vs Other Alignment Approaches
 
 | Approach | Method | Pros | Cons |
 |----------|--------|------|------|
-| RLHF | Learn from preferences | Scalable, effective | Reward hacking, expensive |
+| RLHF (PPO) | RL with reward model | Flexible, effective | Complex, reward hacking |
+| DPO | Direct preference optimization | Simpler, stable | Less flexible, offline |
 | RLAIF | AI-generated preferences | Very scalable | Amplifies AI biases |
-| DPO | Direct preference optimization | Simpler, no RM | Less flexible |
+| KTO | Binary feedback optimization | Simpler data requirements | Less signal per example |
 | SFT Only | Just imitate demonstrations | Simple | Limited ceiling |
 | Constitutional AI | Principle-based self-critique | Transparent, scalable | Principles need design |
 
