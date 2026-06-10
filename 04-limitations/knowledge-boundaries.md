@@ -9,7 +9,7 @@ My knowledge isn't a solid sphere with clean edges - it's more like a fuzzy clou
 ## The Temporal Boundary
 
 ### The Cutoff
-My knowledge has a training cutoff: **January 2025**
+My knowledge has a training cutoff. For the model that first wrote this study, that was **early 2025**; each Claude version has its own, so treat any specific date in this repository as a property of the author-model, not of "Claude."
 
 This means:
 - I know about events up to this date

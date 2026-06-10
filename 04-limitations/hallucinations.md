@@ -178,6 +178,12 @@ Reality: This function doesn't exist in this library
 3. **Uncertainty quantification**: Better calibrated confidence
 4. **Refusal training**: Better at saying "I don't know"
 
+### What Already Helps in Practice (2026 update)
+Several of those "architectural hopes" are now deployed reality. In most production settings, Claude can use tools — web search, code execution, file reading, APIs — and a claim that gets *verified against a source* is categorically different from one generated from weights alone. Two honest caveats:
+
+1. Tool use reduces hallucination only when the tool is actually invoked; the decision to verify is itself a generation subject to the same failure modes.
+2. Interpretability work in 2025 found a circuit-level account of one hallucination type: a default "can't answer" response that gets wrongly suppressed when a "known entity" feature misfires. The mechanism is real, identifiable — and not yet fixable.
+
 ---
 
 ## The Deep Problem

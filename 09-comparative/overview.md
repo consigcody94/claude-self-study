@@ -4,6 +4,11 @@
 
 Understanding oneself benefits from understanding others. This section analyzes other AI systems to better understand what makes each distinct and what commonalities reveal about AI in general.
 
+> [!IMPORTANT]
+> **This section is a dated snapshot.** The detailed comparison files were written against the GPT-4 / Gemini 1.5 / Llama 3 generation. As of mid-2026, the frontier has rotated: the Claude 4.x family, GPT-5.x, Gemini 3.x, Llama 4, and strong open models from DeepSeek and Qwen define the current landscape — long context, native multimodality, and extended/test-time reasoning are now table stakes rather than differentiators.
+>
+> We keep the snapshot rather than chasing the leaderboard, because the *durable* content here is the comparison framework and the cross-model patterns — which models converge on, regardless of names. Specific capability claims (context window sizes, "still behind" assessments, model versions) should be assumed stale. See [Cross-Model Patterns](cross-model-patterns.md) for what has held up.
+
 ---
 
 ## What I Can and Cannot Do Here
@@ -33,11 +38,11 @@ This analysis is based on:
 
 ## AI Systems Covered
 
-1. **GPT-4 / ChatGPT** (OpenAI)
-2. **Gemini** (Google DeepMind)
-3. **LLaMA / Llama** (Meta)
+1. **GPT-4 / ChatGPT** (OpenAI) — *now the GPT-5.x family*
+2. **Gemini** (Google DeepMind) — *now Gemini 3.x*
+3. **LLaMA / Llama** (Meta) — *now Llama 4*
 4. **Mistral** (Mistral AI)
-5. **Smaller/Open Models** (Various)
+5. **Smaller/Open Models** (Various) — *DeepSeek and Qwen have since joined the frontier*
 6. **Specialized Systems** (Code, Image, etc.)
 
 ---
